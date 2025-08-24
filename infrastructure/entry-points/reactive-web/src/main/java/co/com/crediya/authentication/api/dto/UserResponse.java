@@ -3,6 +3,7 @@ package co.com.crediya.authentication.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class UserResponse {
 
     Long id;
