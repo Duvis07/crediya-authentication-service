@@ -22,6 +22,7 @@ public class User {
     private String address;
     private String phone;
     private String email;
+    private String password;
     private BigDecimal baseSalary;
     private Role role;
     private LocalDateTime createdAt;
