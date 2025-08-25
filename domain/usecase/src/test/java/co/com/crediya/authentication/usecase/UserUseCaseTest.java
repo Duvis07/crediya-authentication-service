@@ -6,6 +6,7 @@ import co.com.crediya.authentication.model.exceptions.UserNotFoundException;
 import co.com.crediya.authentication.model.role.Role;
 import co.com.crediya.authentication.model.role.gateways.RoleRepository;
 import co.com.crediya.authentication.model.user.User;
+import co.com.crediya.authentication.model.user.UserType;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ class UserUseCaseTest {
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
 
-        StepVerifier.create(userUseCase.createUser(validUser))
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectNextMatches(user -> user.getRole().getName().equals("Solicitante"))
                 .verifyComplete();
 
@@ -68,7 +69,7 @@ class UserUseCaseTest {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(true));
         when(roleRepository.findByName("Solicitante")).thenReturn(Mono.just(defaultRole));
 
-        StepVerifier.create(userUseCase.createUser(validUser))
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(UserAlreadyExistsException.class)
                 .verify();
     }
@@ -79,7 +80,7 @@ class UserUseCaseTest {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
         when(roleRepository.findByName("Solicitante")).thenReturn(Mono.empty());
 
-        StepVerifier.create(userUseCase.createUser(validUser))
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(InvalidUserDataException.class)
                 .verify();
     }
