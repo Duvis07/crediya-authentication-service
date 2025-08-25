@@ -1,15 +1,10 @@
 package co.com.crediya.authentication.api.handler;
 
 import co.com.crediya.authentication.api.dto.CreateUserRequest;
-import co.com.crediya.authentication.api.exceptions.ValidationException;
 import co.com.crediya.authentication.api.mapper.UserMapper;
 import co.com.crediya.authentication.usecase.UserUseCase;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -19,13 +14,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
-public class UserHandler {
+public class UserHandler extends BaseHandler {
 
     private final UserUseCase userUseCase;
     private final UserMapper userMapper;
-    private final Validator validator;
+
+    public UserHandler(UserUseCase userUseCase, UserMapper userMapper, Validator validator) {
+        super(validator);
+        this.userUseCase = userUseCase;
+        this.userMapper = userMapper;
+    }
 
 
     private static final String MESSAGE_KEY = "message";
@@ -86,19 +85,4 @@ public class UserHandler {
                 .flatMap(this::okResponse);
     }
 
-    // UTILITY METHODS
-
-    private Mono<CreateUserRequest> validate(CreateUserRequest request) {
-        Errors errors = new BeanPropertyBindingResult(request, "request");
-        validator.validate(request, errors);
-        return errors.hasErrors()
-                ? Mono.error(new ValidationException("Validation failed", errors))
-                : Mono.just(request);
-    }
-
-    private Mono<ServerResponse> okResponse(Object data) {
-        return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(data);
-    }
 }

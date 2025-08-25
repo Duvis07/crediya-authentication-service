@@ -53,7 +53,7 @@ class UserUseCaseTest {
     @Test
     void createUserSuccess() {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
-        when(roleRepository.findByName("Solicitante")).thenReturn(Mono.just(defaultRole));
+        when(roleRepository.findByCode("Solicitante")).thenReturn(Mono.just(defaultRole));
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
 
@@ -67,7 +67,7 @@ class UserUseCaseTest {
     @Test
     void createUserFailsWhenEmailExists() {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(true));
-        when(roleRepository.findByName("Solicitante")).thenReturn(Mono.just(defaultRole));
+        when(roleRepository.findByCode("Solicitante")).thenReturn(Mono.just(defaultRole));
 
         StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(UserAlreadyExistsException.class)
@@ -78,7 +78,7 @@ class UserUseCaseTest {
     @Test
     void createUserFailsWhenRoleNotFound() {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
-        when(roleRepository.findByName("Solicitante")).thenReturn(Mono.empty());
+        when(roleRepository.findByCode("Solicitante")).thenReturn(Mono.empty());
 
         StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(InvalidUserDataException.class)

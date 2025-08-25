@@ -23,8 +23,8 @@ public class RoleRepositoryAdapter implements RoleRepository {
     }
 
     @Override
-    public Mono<Role> findByName(String name) {
-        return roleEntityRepository.findByName(name)
+    public Mono<Role> findByCode(String code) {
+        return roleEntityRepository.findByName(code)
                 .map(roleEntityMapper::toModel);
     }
 }

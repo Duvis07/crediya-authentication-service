@@ -40,6 +40,11 @@ public class CreateUserRequest {
     @JsonProperty("email")
     String email;
 
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
+    @JsonProperty("password")
+    String password;
+
     @NotNull(message = "Base salary is required")
     @DecimalMin(value = "0.0", message = "Base salary must be greater or equal to 0")
     @DecimalMax(value = "15000000.0", message = "Base salary must not exceed 15,000,000")
@@ -47,7 +52,7 @@ public class CreateUserRequest {
     BigDecimal baseSalary;
 
     @NotBlank(message = "User type is required")
-    @Pattern(regexp = "APPLICANT|ADMIN", message = "User type must be APPLICANT or ADMIN")
+    @Pattern(regexp = "APPLICANT|ADMIN|ASESOR", message = "User type must be one of the following: APPLICANT, ADMIN, ASESOR")
     @JsonProperty("user_type")
     String userType;
 }

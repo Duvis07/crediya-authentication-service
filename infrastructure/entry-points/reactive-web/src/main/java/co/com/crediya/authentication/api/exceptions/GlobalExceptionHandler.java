@@ -1,5 +1,6 @@
 package co.com.crediya.authentication.api.exceptions;
 
+import co.com.crediya.authentication.model.exceptions.InvalidCredentialsException;
 import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import co.com.crediya.authentication.model.exceptions.UserAlreadyExistsException;
 import co.com.crediya.authentication.model.exceptions.UserNotFoundException;
@@ -31,7 +32,10 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         String message;
         String details = null;
 
-        if (ex instanceof UserAlreadyExistsException) {
+        if (ex instanceof InvalidCredentialsException) {
+            status = HttpStatus.UNAUTHORIZED;
+            message = ex.getMessage();
+        } else if (ex instanceof UserAlreadyExistsException) {
             status = HttpStatus.CONFLICT;
             message = ex.getMessage();
         } else if (ex instanceof UserNotFoundException) {

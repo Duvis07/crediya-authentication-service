@@ -1,0 +1,14 @@
+dependencies {
+    // --- Módulos internos ---
+    implementation project(':model')
+
+    // --- JWT (Json Web Token) ---
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // --- Spring Core y WebFlux ---
+    implementation 'org.springframework:spring-context:6.2.9'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+}

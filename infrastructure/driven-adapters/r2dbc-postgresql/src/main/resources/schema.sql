@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     address VARCHAR(200),
     phone VARCHAR(15),
     email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
     base_salary DECIMAL(15,2) NOT NULL,
     role_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

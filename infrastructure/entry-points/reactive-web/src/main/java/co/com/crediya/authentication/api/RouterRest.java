@@ -1,7 +1,10 @@
 package co.com.crediya.authentication.api;
 
 import co.com.crediya.authentication.api.dto.CreateUserRequest;
+import co.com.crediya.authentication.api.dto.LoginRequest;
+import co.com.crediya.authentication.api.dto.LoginResponse;
 import co.com.crediya.authentication.api.dto.UserResponse;
+import co.com.crediya.authentication.api.handler.AuthHandler;
 import co.com.crediya.authentication.api.handler.UserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,6 +31,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRest {
 
     private final UserHandler userHandler;
+    private final AuthHandler authHandler;
 
     @Bean
     @RouterOperations({
@@ -173,5 +177,44 @@ public class RouterRest {
                 .andRoute(DELETE("/api/v1/usuarios/{id}")
                         .and(accept(MediaType.APPLICATION_JSON)),
                         userHandler::deleteUser);
+    }
+
+    @Bean
+    @RouterOperation(
+            path = "/api/v1/login",
+            method = RequestMethod.POST,
+            operation = @Operation(
+                    operationId = "login",
+                    summary = "Iniciar sesión",
+                    description = "Autentica un usuario y genera un token JWT",
+                    tags = {"Autenticación"},
+                    requestBody = @RequestBody(
+                            description = "Credenciales de acceso",
+                            required = true,
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = LoginRequest.class)
+                            )
+                    ),
+                    responses = {
+                            @ApiResponse(
+                                    responseCode = "200",
+                                    description = "Login exitoso",
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = LoginResponse.class)
+                                    )
+                            ),
+                            @ApiResponse(responseCode = "401", description = "Credenciales inválidas"),
+                            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+                            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+                    }
+            )
+    )
+    public RouterFunction<ServerResponse> authRoutes() {
+        return route(POST("/api/v1/login")
+                        .and(accept(MediaType.APPLICATION_JSON))
+                        .and(contentType(MediaType.APPLICATION_JSON)),
+                authHandler::login);
     }
 }
