@@ -2,7 +2,7 @@ package co.com.crediya.authentication.r2dbc.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "adapters.r2dbc")
+@ConfigurationProperties(prefix = "spring.r2dbc")
 public record PostgresqlConnectionProperties(
         String host,
         Integer port,

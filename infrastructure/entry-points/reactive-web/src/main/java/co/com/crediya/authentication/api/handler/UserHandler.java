@@ -36,8 +36,11 @@ public class UserHandler {
     public Mono<ServerResponse> createUser(ServerRequest request) {
         return request.bodyToMono(CreateUserRequest.class)
                 .flatMap(this::validate)
-                .map(userMapper::toUser)
-                .flatMap(userUseCase::createUser)
+                .flatMap(createUserRequest -> {
+                    var user = userMapper.toUser(createUserRequest);
+                    var userType = userMapper.mapUserType(createUserRequest);
+                    return userUseCase.createUser(user, userType);
+                })
                 .flatMap(user -> {
                     Map<String, Object> response = new HashMap<>();
                     response.put(MESSAGE_KEY, USER_CREATED_MESSAGE);

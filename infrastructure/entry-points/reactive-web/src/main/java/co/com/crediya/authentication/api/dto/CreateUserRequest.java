@@ -45,4 +45,9 @@ public class CreateUserRequest {
     @DecimalMax(value = "15000000.0", message = "Base salary must not exceed 15,000,000")
     @JsonProperty("base_salary")
     BigDecimal baseSalary;
+
+    @NotBlank(message = "User type is required")
+    @Pattern(regexp = "APPLICANT|ADMIN", message = "User type must be APPLICANT or ADMIN")
+    @JsonProperty("user_type")
+    String userType;
 }

@@ -4,6 +4,7 @@ import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import co.com.crediya.authentication.model.exceptions.UserAlreadyExistsException;
 import co.com.crediya.authentication.model.exceptions.UserNotFoundException;
 import co.com.crediya.authentication.model.user.User;
+import co.com.crediya.authentication.model.user.UserType;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
 import co.com.crediya.authentication.model.role.gateways.RoleRepository;
 import co.com.crediya.authentication.model.utils.UserValidator;
@@ -18,22 +19,22 @@ import java.util.logging.Level;
 @RequiredArgsConstructor
 public class UserUseCase {
 
-    private static final String DEFAULT_ROLE_NAME = "Solicitante";
     private static final Logger log = Logger.getLogger(UserUseCase.class.getName());
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    public Mono<User> createUser(User user) {
-        log.log(Level.INFO, "Creating user with email: {0}", user.getEmail());
+    public Mono<User> createUser(User user, UserType userType) {
+        log.log(Level.INFO, "Creating user with email: {0} and type: {1}", new Object[]{user.getEmail(), userType});
 
         return UserValidator.validateUserData(user)
                 .then(validateEmailNotExists(user.getEmail()))
-                .then(assignDefaultRoleToUser(user))
+                .then(assignRoleToUser(user, userType))
                 .flatMap(userRepository::save)
                 .doOnSuccess(saved -> log.log(Level.INFO, "User created with ID: {0}", saved.getId()))
                 .doOnError(error -> log.log(Level.SEVERE, "Error creating user: {0}", error.getMessage()));
     }
+
 
     public Mono<User> findUserById(Long id) {
         log.log(Level.FINE, "Finding user with ID: {0}", id);
@@ -91,10 +92,13 @@ public class UserUseCase {
                 .then();
     }
 
-    private Mono<User> assignDefaultRoleToUser(User user) {
-        return roleRepository.findByName(DEFAULT_ROLE_NAME)
+    private Mono<User> assignRoleToUser(User user, UserType userType) {
+        String roleName = userType.getRoleName();
+        log.log(Level.FINE, "Assigning role: {0} to user", roleName);
+        
+        return roleRepository.findByName(roleName)
                 .switchIfEmpty(Mono.error(new InvalidUserDataException(
-                        "Default role 'Solicitante' not found")))
+                        "Role not found: " + roleName + " for user type: " + userType.getCode())))
                 .map(role -> {
                     LocalDateTime now = LocalDateTime.now();
                     return user.toBuilder()

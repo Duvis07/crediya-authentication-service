@@ -11,6 +11,18 @@ spring:
       path: "/h2"
   profiles:
     include: null
+  r2dbc:
+    host: ${R2DBC_HOST:localhost}
+    port: ${R2DBC_PORT:5433}
+    database: ${R2DBC_DATABASE:crediya_db}
+    schema: ${R2DBC_SCHEMA:public}
+    username: ${R2DBC_USERNAME:postgres}
+    password: ${R2DBC_PASSWORD:changeme}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath*:schema.sql
+      data-locations: classpath*:data.sql
 management:
   endpoints:
     web:
@@ -22,12 +34,3 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
-
-adapters:
-  r2dbc:
-    host: localhost
-    port: 5433
-    database: crediya_db
-    schema: public
-    username: postgres
-    password: nueva_contraseña
