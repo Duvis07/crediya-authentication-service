@@ -11,7 +11,8 @@ import java.util.Arrays;
 @NoArgsConstructor(force = true)
 public enum UserType {
     APPLICANT("Solicitante", "APPLICANT"),
-    ADMIN("Administrador", "ADMIN");
+    ADMIN("Administrador", "ADMIN"),
+    ASESOR("Asesor", "ASESOR");
 
     private final String roleName;
     private final String code;
@@ -23,12 +24,12 @@ public enum UserType {
 
     public static UserType fromCode(String code) {
         if (code == null || code.trim().isEmpty()) {
-            throw new InvalidUserDataException("User type is required. Valid values: APPLICANT, ADMIN");
+            throw new InvalidUserDataException("User type is required. Valid values: APPLICANT, ADMIN, ASESOR");
         }
 
         return Arrays.stream(values())
                 .filter(type -> type.code.equalsIgnoreCase(code.trim()))
                 .findFirst()
-                .orElseThrow(() -> new InvalidUserDataException("Invalid user type: " + code + ". Valid values: APPLICANT, ADMIN"));
+                .orElseThrow(() -> new InvalidUserDataException("Invalid user type: " + code + ". Valid values: APPLICANT, ADMIN, ASESOR"));
     }
 }
