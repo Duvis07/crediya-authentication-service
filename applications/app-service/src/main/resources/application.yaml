@@ -43,10 +43,11 @@ management:
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 
-logging:
-  level:
-    co.com.crediya: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.security: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+#logging:
+#  level:
+#    co.com.crediya: INFO
+#    org.springframework.web: INFO
+#    org.springframework.security: INFO
+#    org.springframework.r2dbc: INFO
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

@@ -52,7 +52,7 @@ public class CreateUserRequest {
     BigDecimal baseSalary;
 
     @NotBlank(message = "User type is required")
-    @Pattern(regexp = "APPLICANT|ADMIN", message = "User type must be APPLICANT or ADMIN")
+    @Pattern(regexp = "APPLICANT|ADMIN|ASESOR", message = "User type must be one of the following: APPLICANT, ADMIN, ASESOR")
     @JsonProperty("user_type")
     String userType;
 }
