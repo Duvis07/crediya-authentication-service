@@ -93,12 +93,12 @@ public class UserUseCase {
     }
 
     private Mono<User> assignRoleToUser(User user, UserType userType) {
-        String roleName = userType.getRoleName();
-        log.log(Level.FINE, "Assigning role: {0} to user", roleName);
+        String roleCode = userType.getCode();
+        log.log(Level.FINE, "Assigning role: {0} to user", roleCode);
         
-        return roleRepository.findByName(roleName)
+        return roleRepository.findByCode(roleCode)
                 .switchIfEmpty(Mono.error(new InvalidUserDataException(
-                        "Role not found: " + roleName + " for user type: " + userType.getCode())))
+                        "Role not found: " + roleCode + " for user type: " + userType.getCode())))
                 .map(role -> {
                     LocalDateTime now = LocalDateTime.now();
                     return user.toBuilder()
