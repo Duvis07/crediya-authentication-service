@@ -59,11 +59,11 @@ class RoleRepositoryAdapterTest {
     }
 
     @Test
-    void findByNameSuccess() {
+    void findByCodeSuccess() {
         when(roleEntityRepository.findByName("Solicitante")).thenReturn(Mono.just(roleEntity));
         when(roleEntityMapper.toModel(roleEntity)).thenReturn(roleModel);
 
-        StepVerifier.create(roleRepositoryAdapter.findByName("Solicitante"))
+        StepVerifier.create(roleRepositoryAdapter.findByCode("Solicitante"))
                 .expectNext(roleModel)
                 .verifyComplete();
 
@@ -72,10 +72,10 @@ class RoleRepositoryAdapterTest {
     }
 
     @Test
-    void findByNameEmpty() {
+    void findByCodeEmpty() {
         when(roleEntityRepository.findByName("Inexistente")).thenReturn(Mono.empty());
 
-        StepVerifier.create(roleRepositoryAdapter.findByName("Inexistente"))
+        StepVerifier.create(roleRepositoryAdapter.findByCode("Inexistente"))
                 .verifyComplete();
 
         verify(roleEntityRepository).findByName("Inexistente");
