@@ -1,5 +1,6 @@
 package co.com.crediya.authentication.usecase;
 
+import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import co.com.crediya.authentication.model.exceptions.UserAlreadyExistsException;
 import co.com.crediya.authentication.model.user.User;
 import co.com.crediya.authentication.model.user.UserType;
@@ -50,6 +51,8 @@ public class UserUseCase {
 
     private Mono<User> assignRoleToUser(User user, UserType userType) {
         return roleRepository.findByCode(userType.getCode())
+                .switchIfEmpty(Mono.error(new InvalidUserDataException(
+                        "Role not found for user type: " + userType.getCode())))
                 .map(role -> {
                     user.setRole(role);
                     user.setCreatedAt(LocalDateTime.now());

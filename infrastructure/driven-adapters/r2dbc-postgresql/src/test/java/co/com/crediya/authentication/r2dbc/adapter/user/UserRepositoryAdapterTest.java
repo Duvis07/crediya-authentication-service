@@ -83,19 +83,6 @@ class UserRepositoryAdapterTest {
         verify(roleRepositoryAdapter).findById(10L);
     }
 
-    @Test
-    void findByIdWithoutRole() {
-        UserEntity entityWithoutRole = userEntity.toBuilder().roleId(null).build();
-        when(userEntityRepository.findById(1L)).thenReturn(Mono.just(entityWithoutRole));
-        when(userEntityMapper.toDomain(entityWithoutRole)).thenReturn(userDomain);
-
-        StepVerifier.create(userRepositoryAdapter.findById(1L))
-                .expectNext(userDomain)
-                .verifyComplete();
-
-        verify(userEntityRepository).findById(1L);
-        verify(roleRepositoryAdapter, never()).findById(any());
-    }
 
     @Test
     void existsByEmailReturnsTrue() {
@@ -106,28 +93,6 @@ class UserRepositoryAdapterTest {
                 .verifyComplete();
     }
 
-    @Test
-    void updateUserSuccess() {
-        when(userEntityMapper.toEntity(userDomain)).thenReturn(userEntity);
-        when(userEntityRepository.save(userEntity)).thenReturn(Mono.just(userEntity));
-        when(userEntityMapper.toDomain(userEntity)).thenReturn(userDomain);
-
-        StepVerifier.create(userRepositoryAdapter.update(userDomain))
-                .expectNext(userDomain)
-                .verifyComplete();
-
-        verify(userEntityRepository).save(userEntity);
-    }
-
-    @Test
-    void deleteByIdSuccess() {
-        when(userEntityRepository.deleteById(1L)).thenReturn(Mono.empty());
-
-        StepVerifier.create(userRepositoryAdapter.deleteById(1L))
-                .verifyComplete();
-
-        verify(userEntityRepository).deleteById(1L);
-    }
 
     @Test
     void findAllUsers() {

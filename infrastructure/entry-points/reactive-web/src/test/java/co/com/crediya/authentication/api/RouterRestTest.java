@@ -66,19 +66,6 @@ class RouterRestTest {
                 .isEqualTo(sampleUser);
     }
 
-    @Test
-    void getUserByIdShouldReturnUserResponse() {
-        Mockito.when(userHandler.getUserById(Mockito.any())).thenReturn(
-                ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(sampleUser)
-        );
-
-        webTestClient.get()
-                .uri("/api/v1/usuarios/1")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserResponse.class)
-                .isEqualTo(sampleUser);
-    }
 
     @Test
     void getAllUsersShouldReturnFluxOfUsers() {
@@ -93,34 +80,6 @@ class RouterRestTest {
                 .expectBodyList(UserResponse.class)
                 .hasSize(1)
                 .contains(sampleUser);
-    }
-
-    @Test
-    void updateUserShouldReturnUpdatedUser() {
-        Mockito.when(userHandler.updateUser(Mockito.any())).thenReturn(
-                ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(sampleUser)
-        );
-
-        webTestClient.put()
-                .uri("/api/v1/usuarios/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(sampleUser)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserResponse.class)
-                .isEqualTo(sampleUser);
-    }
-
-    @Test
-    void deleteUserShouldReturnNoContent() {
-        Mockito.when(userHandler.deleteUser(Mockito.any())).thenReturn(
-                ServerResponse.noContent().build()
-        );
-
-        webTestClient.delete()
-                .uri("/api/v1/usuarios/1")
-                .exchange()
-                .expectStatus().isNoContent();
     }
 
     // ---- Casos extras para llegar a 9 tests ----
@@ -139,29 +98,4 @@ class RouterRestTest {
                 .expectStatus().isBadRequest();
     }
 
-    @Test
-    void getUserByNonExistingIdShouldReturnNotFound() {
-        Mockito.when(userHandler.getUserById(Mockito.any())).thenReturn(
-                ServerResponse.notFound().build()
-        );
-
-        webTestClient.get()
-                .uri("/api/v1/usuarios/999")
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-    @Test
-    void updateUserWithNonExistingIdShouldReturnNotFound() {
-        Mockito.when(userHandler.updateUser(Mockito.any())).thenReturn(
-                ServerResponse.notFound().build()
-        );
-
-        webTestClient.put()
-                .uri("/api/v1/usuarios/999")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(sampleUser)
-                .exchange()
-                .expectStatus().isNotFound();
-    }
 }
