@@ -11,11 +11,5 @@ public interface UserRepository {
 
     Mono<Boolean> existsByEmail(String email);
 
-    Mono<User> findById(Long id);
-
     Flux<User> findAll();
-
-    Mono<User> update(User user);
-
-    Mono<Void> deleteById(Long id);
 }

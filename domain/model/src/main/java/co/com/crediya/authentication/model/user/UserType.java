@@ -3,12 +3,14 @@ package co.com.crediya.authentication.model.user;
 import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 import java.util.Arrays;
 
 @Getter
 @NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 public enum UserType {
     APPLICANT("Solicitante", "APPLICANT"),
     ADMIN("Administrador", "ADMIN"),
@@ -16,11 +18,6 @@ public enum UserType {
 
     private final String roleName;
     private final String code;
-
-    UserType(String roleName, String code) {
-        this.roleName = roleName;
-        this.code = code;
-    }
 
     public static UserType fromCode(String code) {
         if (code == null || code.trim().isEmpty()) {

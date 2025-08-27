@@ -164,19 +164,9 @@ public class RouterRest {
                         .and(accept(MediaType.APPLICATION_JSON))
                         .and(contentType(MediaType.APPLICATION_JSON)),
                 userHandler::createUser)
-                .andRoute(GET("/api/v1/usuarios/{id}")
-                        .and(accept(MediaType.APPLICATION_JSON)),
-                        userHandler::getUserById)
                 .andRoute(GET("/api/v1/usuarios")
                         .and(accept(MediaType.APPLICATION_JSON)),
-                        userHandler::getAllUsers)
-                .andRoute(PUT("/api/v1/usuarios/{id}")
-                        .and(accept(MediaType.APPLICATION_JSON))
-                        .and(contentType(MediaType.APPLICATION_JSON)),
-                        userHandler::updateUser)
-                .andRoute(DELETE("/api/v1/usuarios/{id}")
-                        .and(accept(MediaType.APPLICATION_JSON)),
-                        userHandler::deleteUser);
+                        userHandler::getAllUsers);
     }
 
     @Bean

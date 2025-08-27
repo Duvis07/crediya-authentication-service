@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("role")
+@Table("roles")
 public class RoleEntity {
     @Id
     @Column("id")

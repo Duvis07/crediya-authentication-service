@@ -46,31 +46,6 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public Mono<User> findById(Long id) {
-        log.debug("Searching user by ID: {}", id);
-        return userEntityRepository.findById(id)
-                .flatMap(this::enrichWithRole)
-                .doOnNext(user -> log.debug("User found with ID: {}", id));
-    }
-
-    @Override
-    @Transactional
-    public Mono<User> update(User user) {
-        log.debug("Updating user with ID: {}", user.getId());
-        return Mono.just(user)
-                .map(userEntityMapper::toEntity)
-                .flatMap(userEntityRepository::save)
-                .map(userEntityMapper::toDomain)
-                .doOnSuccess(updatedUser -> log.debug("User successfully updated with ID: {}", updatedUser.getId()));
-    }
-
-    @Override
-    @Transactional
-    public Mono<Void> deleteById(Long id) {
-        return userEntityRepository.deleteById(id);
-    }
-
-    @Override
     public Flux<User> findAll() {
         log.debug("Fetching all users from database");
         return userEntityRepository.findAll()

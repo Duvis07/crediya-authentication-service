@@ -2,7 +2,7 @@
 -- This file is automatically executed by Spring Boot after schema.sql
 
 -- Insert default roles
-INSERT INTO role (id, name, description) VALUES
+INSERT INTO roles (id, name, description) VALUES
     (1, 'APPLICANT', 'Usuario que puede solicitar préstamos personales'),
     (2, 'ADMIN', 'Usuario con permisos administrativos completos del sistema'),
     (3, 'ASESOR', 'Asesor de crédito con permisos de gestión')
@@ -44,30 +44,3 @@ ON CONFLICT (email) DO UPDATE SET
     address = EXCLUDED.address,
     phone = EXCLUDED.phone,
     updated_at = CURRENT_TIMESTAMP;
-
--- COMENTADO: Usuario duplicado ya insertado arriba
--- INSERT INTO users (
---     first_name, 
---     last_name, 
---     email, 
---     password, 
---     role_id, 
---     base_salary, 
---     birth_date,
---     address,
---     phone,
---     created_at, 
---     updated_at
--- ) VALUES (
---     'María',
---     'González',
---     'asesor@crediya.com',
---     '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3bp.gSUyAu',
---     3,
---     8000000,
---     '1985-05-15',
---     'Sucursal Norte CrediYa',
---     '+573009876543',
---     CURRENT_TIMESTAMP,
---     CURRENT_TIMESTAMP
--- ) ON CONFLICT (email) DO NOTHING;
