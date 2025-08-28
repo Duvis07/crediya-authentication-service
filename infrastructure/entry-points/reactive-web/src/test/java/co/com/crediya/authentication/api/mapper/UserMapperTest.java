@@ -4,6 +4,7 @@ import co.com.crediya.authentication.api.dto.CreateUserRequest;
 import co.com.crediya.authentication.api.dto.UserResponse;
 import co.com.crediya.authentication.model.role.Role;
 import co.com.crediya.authentication.model.user.User;
+import co.com.crediya.authentication.model.user.UserType;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -38,7 +39,6 @@ class UserMapperTest {
         assertThat(user.getAddress()).isEqualTo("Calle 123");
         assertThat(user.getPhone()).isEqualTo("3001234567");
         assertThat(user.getBaseSalary()).isEqualTo(BigDecimal.valueOf(2500.0));
-        // dependiendo de cómo hayas configurado el mapper para roleId -> role puede ser null
     }
 
     @Test
@@ -86,5 +86,27 @@ class UserMapperTest {
     void toUserResponseShouldReturnNullWhenUserIsNull() {
         UserResponse response = mapper.toUserResponse(null);
         assertThat(response).isNull();
+    }
+
+    @Test
+    void mapUserTypeShouldReturnApplicantWhenUserTypeIsApplicant() {
+        CreateUserRequest request = CreateUserRequest.builder()
+                .userType("APPLICANT")
+                .build();
+
+        UserType userType = mapper.mapUserType(request);
+
+        assertThat(userType).isEqualTo(UserType.APPLICANT);
+    }
+
+    @Test
+    void mapUserTypeShouldReturnAdminWhenUserTypeIsAdmin() {
+        CreateUserRequest request = CreateUserRequest.builder()
+                .userType("ADMIN")
+                .build();
+
+        UserType userType = mapper.mapUserType(request);
+
+        assertThat(userType).isEqualTo(UserType.ADMIN);
     }
 }

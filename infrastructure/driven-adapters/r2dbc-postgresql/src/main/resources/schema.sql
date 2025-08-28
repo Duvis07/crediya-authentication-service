@@ -1,8 +1,8 @@
 -- Schema initialization for R2DBC
 -- This file is automatically executed by Spring Boot on startup
 
--- Create role table
-CREATE TABLE IF NOT EXISTS role (
+-- Create roles table
+CREATE TABLE IF NOT EXISTS roles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     description VARCHAR(255)
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
     -- Foreign key constraint
     CONSTRAINT fk_users_role 
         FOREIGN KEY (role_id) 
-        REFERENCES role(id) 
+        REFERENCES roles(id)
         ON DELETE RESTRICT 
         ON UPDATE CASCADE
 );

@@ -20,17 +20,14 @@ public class UserHandler extends BaseHandler {
     private final UserUseCase userUseCase;
     private final UserMapper userMapper;
 
+    private static final String MESSAGE_KEY = "message";
+    private static final String USER_CREATED_MESSAGE = "User successfully created";
+
     public UserHandler(UserUseCase userUseCase, UserMapper userMapper, Validator validator) {
         super(validator);
         this.userUseCase = userUseCase;
         this.userMapper = userMapper;
     }
-
-
-    private static final String MESSAGE_KEY = "message";
-    private static final String USER_CREATED_MESSAGE = "User successfully created";
-    private static final String USER_UPDATED_MESSAGE = "User successfully updated";
-    private static final String USER_DELETED_MESSAGE = "User successfully deleted";
 
     public Mono<ServerResponse> createUser(ServerRequest request) {
         return request.bodyToMono(CreateUserRequest.class)
@@ -47,12 +44,6 @@ public class UserHandler extends BaseHandler {
                 });
     }
 
-    public Mono<ServerResponse> getUserById(ServerRequest request) {
-        Long id = Long.parseLong(request.pathVariable("id"));
-        return userUseCase.findUserById(id)
-                .map(userMapper::toUserResponse)
-                .flatMap(this::okResponse);
-    }
 
     public Mono<ServerResponse> getAllUsers(ServerRequest request) {
         return userUseCase.findAllUsers()
@@ -60,29 +51,4 @@ public class UserHandler extends BaseHandler {
                 .collectList()
                 .flatMap(this::okResponse);
     }
-
-    public Mono<ServerResponse> updateUser(ServerRequest request) {
-        Long id = Long.parseLong(request.pathVariable("id"));
-        return request.bodyToMono(CreateUserRequest.class)
-                .flatMap(this::validate)
-                .map(userMapper::toUser)
-                .flatMap(user -> userUseCase.updateUser(id, user))
-                .flatMap(user -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put(MESSAGE_KEY, USER_UPDATED_MESSAGE);
-                    return okResponse(response);
-                });
-    }
-
-    public Mono<ServerResponse> deleteUser(ServerRequest request) {
-        Long id = Long.parseLong(request.pathVariable("id"));
-        return userUseCase.deleteUser(id)
-                .then(Mono.fromCallable(() -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put(MESSAGE_KEY, USER_DELETED_MESSAGE);
-                    return response;
-                }))
-                .flatMap(this::okResponse);
-    }
-
 }

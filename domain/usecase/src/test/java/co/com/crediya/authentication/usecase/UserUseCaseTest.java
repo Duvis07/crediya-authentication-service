@@ -2,7 +2,6 @@ package co.com.crediya.authentication.usecase;
 
 import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import co.com.crediya.authentication.model.exceptions.UserAlreadyExistsException;
-import co.com.crediya.authentication.model.exceptions.UserNotFoundException;
 import co.com.crediya.authentication.model.role.Role;
 import co.com.crediya.authentication.model.role.gateways.RoleRepository;
 import co.com.crediya.authentication.model.user.User;
@@ -53,7 +52,7 @@ class UserUseCaseTest {
     @Test
     void createUserSuccess() {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
-        when(roleRepository.findByCode("Solicitante")).thenReturn(Mono.just(defaultRole));
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
 
@@ -67,7 +66,7 @@ class UserUseCaseTest {
     @Test
     void createUserFailsWhenEmailExists() {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(true));
-        when(roleRepository.findByCode("Solicitante")).thenReturn(Mono.just(defaultRole));
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
 
         StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(UserAlreadyExistsException.class)
@@ -78,28 +77,10 @@ class UserUseCaseTest {
     @Test
     void createUserFailsWhenRoleNotFound() {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
-        when(roleRepository.findByCode("Solicitante")).thenReturn(Mono.empty());
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.empty());
 
         StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(InvalidUserDataException.class)
-                .verify();
-    }
-
-    @Test
-    void findUserByIdSuccess() {
-        when(userRepository.findById(1L)).thenReturn(Mono.just(validUser));
-
-        StepVerifier.create(userUseCase.findUserById(1L))
-                .expectNext(validUser)
-                .verifyComplete();
-    }
-
-    @Test
-    void findUserByIdNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Mono.empty());
-
-        StepVerifier.create(userUseCase.findUserById(1L))
-                .expectError(UserNotFoundException.class)
                 .verify();
     }
 
@@ -113,38 +94,120 @@ class UserUseCaseTest {
     }
 
     @Test
-    void updateUserSuccess() {
-        User updated = validUser.toBuilder().firstName("Carlos").build();
+    void createUserWithAdminRole() {
+        Role adminRole = Role.builder().id(2L).name("ADMIN").build();
 
-        when(userRepository.findById(1L)).thenReturn(Mono.just(validUser));
-        when(userRepository.findByEmail(updated.getEmail())).thenReturn(Mono.just(updated));
-        when(userRepository.update(any(User.class)))
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
+        when(roleRepository.findByCode("ADMIN")).thenReturn(Mono.just(adminRole));
+        when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
 
-        StepVerifier.create(userUseCase.updateUser(1L, updated))
-                .expectNextMatches(user -> user.getFirstName().equals("Carlos"))
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.ADMIN))
+                .expectNextMatches(user -> user.getRole().getName().equals("ADMIN"))
                 .verifyComplete();
+
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
-    void updateUserFailsWhenUserNotFound() {
-        User updated = validUser.toBuilder().firstName("Carlos").build();
+    void createUserWithAsesorRole() {
+        Role asesorRole = Role.builder().id(3L).name("ASESOR").build();
 
-        when(userRepository.findById(1L)).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
+        when(roleRepository.findByCode("ASESOR")).thenReturn(Mono.just(asesorRole));
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
 
-        StepVerifier.create(userUseCase.updateUser(1L, updated))
-                .expectError(UserNotFoundException.class)
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.ASESOR))
+                .expectNextMatches(user -> user.getRole().getName().equals("ASESOR"))
+                .verifyComplete();
+
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    void createUserFailsWhenValidationFails() {
+        User invalidUser = User.builder()
+                .firstName("")  // Invalid: empty first name
+                .lastName("Pérez")
+                .email("invalid-email")  // Invalid: bad email format
+                .baseSalary(BigDecimal.valueOf(-1000))  // Invalid: negative salary
+                .build();
+
+
+        when(userRepository.existsByEmail(invalidUser.getEmail())).thenReturn(Mono.just(false));
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
+
+        StepVerifier.create(userUseCase.createUser(invalidUser, UserType.APPLICANT))
+                .expectError(InvalidUserDataException.class)
+                .verify();
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void createUserFailsWhenRepositorySaveFails() {
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
+        when(userRepository.save(any(User.class)))
+                .thenReturn(Mono.error(new RuntimeException("Database connection failed")));
+
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
+                .expectError(RuntimeException.class)
                 .verify();
     }
 
     @Test
-    void deleteUserSuccess() {
-        when(userRepository.findById(1L)).thenReturn(Mono.just(validUser));
-        when(userRepository.deleteById(1L)).thenReturn(Mono.empty());
+    void createUserSetsTimestampsCorrectly() {
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(Mono.just(false));
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
 
-        StepVerifier.create(userUseCase.deleteUser(1L))
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
+                .expectNextMatches(user ->
+                        user.getCreatedAt() != null &&
+                                user.getUpdatedAt() != null &&
+                                user.getRole() != null)
                 .verifyComplete();
+    }
 
-        verify(userRepository).deleteById(1L);
+    @Test
+    void findAllUsersReturnsEmptyWhenNoUsers() {
+        when(userRepository.findAll()).thenReturn(Flux.empty());
+
+        StepVerifier.create(userUseCase.findAllUsers())
+                .verifyComplete();
+    }
+
+    @Test
+    void findAllUsersReturnsMultipleUsers() {
+        User user2 = User.builder()
+                .id(2L)
+                .firstName("Maria")
+                .lastName("González")
+                .email("maria@example.com")
+                .build();
+
+        when(userRepository.findAll()).thenReturn(Flux.just(validUser, user2));
+
+        StepVerifier.create(userUseCase.findAllUsers())
+                .expectNext(validUser)
+                .expectNext(user2)
+                .verifyComplete();
+    }
+
+    @Test
+    void createUserFailsWhenEmailCheckThrowsException() {
+        when(userRepository.existsByEmail(validUser.getEmail()))
+                .thenReturn(Mono.error(new RuntimeException("Database error")));
+        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
+
+        StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
+                .expectError(RuntimeException.class)
+                .verify();
+
+        verify(roleRepository).findByCode("APPLICANT");
+        verify(userRepository, never()).save(any(User.class));
     }
 }
