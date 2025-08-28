@@ -3,12 +3,12 @@ package co.com.crediya.authentication.api.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor(force = true)
 public class RoleResponse {
 
     Long id;

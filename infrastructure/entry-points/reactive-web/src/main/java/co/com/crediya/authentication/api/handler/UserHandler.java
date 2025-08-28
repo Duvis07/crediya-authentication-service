@@ -20,15 +20,14 @@ public class UserHandler extends BaseHandler {
     private final UserUseCase userUseCase;
     private final UserMapper userMapper;
 
+    private static final String MESSAGE_KEY = "message";
+    private static final String USER_CREATED_MESSAGE = "User successfully created";
+
     public UserHandler(UserUseCase userUseCase, UserMapper userMapper, Validator validator) {
         super(validator);
         this.userUseCase = userUseCase;
         this.userMapper = userMapper;
     }
-
-
-    private static final String MESSAGE_KEY = "message";
-    private static final String USER_CREATED_MESSAGE = "User successfully created";
 
     public Mono<ServerResponse> createUser(ServerRequest request) {
         return request.bodyToMono(CreateUserRequest.class)

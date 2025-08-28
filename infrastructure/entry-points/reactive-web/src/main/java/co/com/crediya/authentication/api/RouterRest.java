@@ -7,7 +7,6 @@ import co.com.crediya.authentication.api.dto.UserResponse;
 import co.com.crediya.authentication.api.handler.AuthHandler;
 import co.com.crediya.authentication.api.handler.UserHandler;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -67,29 +66,6 @@ public class RouterRest {
                     )
             ),
             @RouterOperation(
-                    path = "/api/v1/usuarios/{id}",
-                    method = RequestMethod.GET,
-                    operation = @Operation(
-                            operationId = "getUserById",
-                            summary = "Obtener usuario por ID",
-                            description = "Obtiene la información de un usuario específico mediante su ID",
-                            tags = {"Usuarios"},
-                            parameters = @Parameter(name = "id", description = "ID del usuario", required = true),
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Usuario encontrado",
-                                            content = @Content(
-                                                    mediaType = "application/json",
-                                                    schema = @Schema(implementation = UserResponse.class)
-                                            )
-                                    ),
-                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-                                    @ApiResponse(responseCode = "400", description = "ID inválido")
-                            }
-                    )
-            ),
-            @RouterOperation(
                     path = "/api/v1/usuarios",
                     method = RequestMethod.GET,
                     operation = @Operation(
@@ -110,54 +86,6 @@ public class RouterRest {
                             }
                     )
             ),
-            @RouterOperation(
-                    path = "/api/v1/usuarios/{id}",
-                    method = RequestMethod.PUT,
-                    operation = @Operation(
-                            operationId = "updateUser",
-                            summary = "Actualizar usuario",
-                            description = "Actualiza la información de un usuario existente",
-                            tags = {"Usuarios"},
-                            parameters = @Parameter(name = "id", description = "ID del usuario", required = true),
-                            requestBody = @RequestBody(
-                                    description = "Datos actualizados del usuario",
-                                    required = true,
-                                    content = @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = CreateUserRequest.class)
-                                    )
-                            ),
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Usuario actualizado exitosamente",
-                                            content = @Content(
-                                                    mediaType = "application/json",
-                                                    schema = @Schema(implementation = UserResponse.class)
-                                            )
-                                    ),
-                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-                                    @ApiResponse(responseCode = "400", description = "Datos inválidos o ID inválido"),
-                                    @ApiResponse(responseCode = "409", description = "El correo electrónico ya está registrado por otro usuario")
-                            }
-                    )
-            ),
-            @RouterOperation(
-                    path = "/api/v1/usuarios/{id}",
-                    method = RequestMethod.DELETE,
-                    operation = @Operation(
-                            operationId = "deleteUser",
-                            summary = "Eliminar usuario",
-                            description = "Elimina un usuario del sistema",
-                            tags = {"Usuarios"},
-                            parameters = @Parameter(name = "id", description = "ID del usuario", required = true),
-                            responses = {
-                                    @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),
-                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-                                    @ApiResponse(responseCode = "400", description = "ID inválido")
-                            }
-                    )
-            )
     })
     public RouterFunction<ServerResponse> userRoutes() {
         return route(POST("/api/v1/usuarios")
