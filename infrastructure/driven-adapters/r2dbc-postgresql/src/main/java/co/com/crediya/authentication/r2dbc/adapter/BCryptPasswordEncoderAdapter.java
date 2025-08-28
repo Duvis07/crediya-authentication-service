@@ -4,10 +4,10 @@ import co.com.crediya.authentication.model.auth.gateways.PasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-@Component
+@Repository
 public class BCryptPasswordEncoderAdapter implements PasswordEncoder {
 
     private static final Logger log = LoggerFactory.getLogger(BCryptPasswordEncoderAdapter.class);

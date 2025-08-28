@@ -6,9 +6,10 @@ import co.com.crediya.authentication.model.role.gateways.RoleRepository;
 import co.com.crediya.authentication.r2dbc.mapper.RoleEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class RoleRepositoryAdapter implements RoleRepository {
 
