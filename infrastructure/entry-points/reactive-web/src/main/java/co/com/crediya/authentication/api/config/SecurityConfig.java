@@ -44,6 +44,7 @@ public class SecurityConfig {
             .authorizeExchange(exchanges -> exchanges
                 // Endpoints públicos (sin autenticación)
                 .pathMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
+                .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/**").permitAll()
                 
                 // Swagger/OpenAPI (público)
                 .pathMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()

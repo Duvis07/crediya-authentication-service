@@ -40,4 +40,8 @@ abstract class BaseHandler {
     protected Mono<ServerResponse> noContentResponse() {
         return ServerResponse.noContent().build();
     }
+
+    protected Mono<ServerResponse> notFoundResponse(String message) {
+        return ServerResponse.notFound().build();
+    }
 }

@@ -65,7 +65,8 @@ public class JwtAuthenticationFilter implements WebFilter {
     }
 
     private boolean isProtectedEndpoint(String path) {
-        return path.startsWith("/api/v1/usuarios");
+        // No endpoints are protected for now - all are public
+        return false;
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange) {
