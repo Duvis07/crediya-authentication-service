@@ -39,6 +39,14 @@ public class UserUseCase {
         return userRepository.findAll();
     }
 
+    public Mono<User> findByDocumentId(String documentId) {
+        log.log(Level.INFO, "Finding user by documentId: {0}", documentId);
+        return userRepository.findByDocumentId(documentId)
+                .doOnSuccess(user -> log.log(Level.INFO, "User found with documentId: {0}", documentId))
+                .doOnError(error -> log.log(Level.SEVERE, "Error finding user by documentId {0}: {1}",
+                        new Object[]{documentId, error.getMessage()}));
+    }
+
     // PRIVATE METHODS
 
     private Mono<Void> checkEmailUniqueness(String email) {
