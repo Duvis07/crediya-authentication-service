@@ -94,6 +94,15 @@ public class RouterRest {
                             summary = "Obtener usuario por documento de identidad",
                             description = "Obtiene un usuario específico por su documento de identidad",
                             tags = {"Usuarios"},
+                            parameters = {
+                                    @io.swagger.v3.oas.annotations.Parameter(
+                                            name = "documentId",
+                                            description = "Documento de identidad del usuario",
+                                            required = true,
+                                            in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+                                            schema = @Schema(type = "string", example = "12345678")
+                                    )
+                            },
                             responses = {
                                     @ApiResponse(
                                             responseCode = "200",
