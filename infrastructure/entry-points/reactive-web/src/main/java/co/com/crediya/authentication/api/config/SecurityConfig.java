@@ -1,6 +1,8 @@
 package co.com.crediya.authentication.api.config;
 
 import co.com.crediya.authentication.api.dto.ErrorResponse;
+import co.com.crediya.authentication.jwt.security.JwtReactiveAuthenticationManager;
+import co.com.crediya.authentication.jwt.security.JwtServerSecurityContextRepository;
 import co.com.crediya.authentication.model.user.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
