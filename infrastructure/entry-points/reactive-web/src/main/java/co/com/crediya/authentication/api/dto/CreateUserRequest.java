@@ -13,6 +13,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateUserRequest {
 
+    @NotBlank(message = "Document ID is required")
+    @Size(max = 20, message = "Document ID must not exceed 20 characters")
+    String documentId;
+
     @NotBlank(message = "First name is required")
     @Size(max = 100, message = "First name must not exceed 100 characters")
     String firstName;

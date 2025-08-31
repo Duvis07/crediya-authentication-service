@@ -34,4 +34,6 @@ public class UserResponse {
     LocalDateTime createdAt;
 
     RoleResponse role;
+
+    String userType;
 }
