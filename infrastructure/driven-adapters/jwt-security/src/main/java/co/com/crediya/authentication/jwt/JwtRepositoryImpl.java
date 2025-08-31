@@ -1,7 +1,7 @@
 package co.com.crediya.authentication.jwt;
 
 import co.com.crediya.authentication.model.auth.JwtToken;
-import co.com.crediya.authentication.model.auth.gateways.JwtService;
+import co.com.crediya.authentication.model.auth.gateways.JwtRepository;
 import co.com.crediya.authentication.model.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,14 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class JwtServiceImpl implements JwtService {
+public class JwtRepositoryImpl implements JwtRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtRepositoryImpl.class);
     private final SecretKey secretKey;
     private final long jwtExpiration;
 
-    public JwtServiceImpl(@Value("${jwt.secret:mySecretKey}") String secret,
-                         @Value("${jwt.expiration:86400000}") long jwtExpiration) {
+    public JwtRepositoryImpl(@Value("${jwt.secret:mySecretKey}") String secret,
+                             @Value("${jwt.expiration:86400000}") long jwtExpiration) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.jwtExpiration = jwtExpiration;
     }
