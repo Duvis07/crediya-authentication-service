@@ -26,7 +26,6 @@ class UserUseCaseTest {
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private PasswordEncoderRepository passwordEncoder;
     private UserUseCase userUseCase;
 
     private User validUser;
@@ -36,7 +35,7 @@ class UserUseCaseTest {
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         roleRepository = Mockito.mock(RoleRepository.class);
-        passwordEncoder = Mockito.mock(PasswordEncoderRepository.class);
+        PasswordEncoderRepository passwordEncoder = Mockito.mock(PasswordEncoderRepository.class);
         userUseCase = new UserUseCase(userRepository, roleRepository, passwordEncoder);
 
         // Mock password encoder to return encrypted password
