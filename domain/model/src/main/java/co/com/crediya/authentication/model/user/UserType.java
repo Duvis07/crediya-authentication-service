@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 
 @Getter
-@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public enum UserType {
     APPLICANT("Solicitante", "APPLICANT"),

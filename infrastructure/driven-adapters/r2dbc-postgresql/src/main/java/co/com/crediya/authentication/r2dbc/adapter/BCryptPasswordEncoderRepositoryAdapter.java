@@ -20,7 +20,6 @@ public class BCryptPasswordEncoderRepositoryAdapter implements PasswordEncoderRe
     @Override
     public Mono<Boolean> matches(String rawPassword, String encodedPassword) {
         return Mono.fromCallable(() -> {
-                    log.info("DEBUG - Password validation: Raw='{}', Stored='{}'", rawPassword, encodedPassword);
 
                     // Verificar formato del hash
                     if (!encodedPassword.startsWith("$2a$") && !encodedPassword.startsWith("$2b$") && !encodedPassword.startsWith("$2y$")) {
