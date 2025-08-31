@@ -1,7 +1,7 @@
 package co.com.crediya.authentication.config;
 
-import co.com.crediya.authentication.model.auth.gateways.JwtService;
-import co.com.crediya.authentication.model.auth.gateways.PasswordEncoder;
+import co.com.crediya.authentication.model.auth.gateways.JwtRepository;
+import co.com.crediya.authentication.model.auth.gateways.PasswordEncoderRepository;
 import co.com.crediya.authentication.model.role.gateways.RoleRepository;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
 import co.com.crediya.authentication.usecase.AuthUseCase;
@@ -12,24 +12,24 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class UseCasesConfig {
     private final UserRepository userRepository;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+    private final JwtRepository jwtRepository;
+    private final PasswordEncoderRepository passwordEncoderRepository;
     private final RoleRepository roleRepository;
 
-    public UseCasesConfig(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UseCasesConfig(UserRepository userRepository, JwtRepository jwtRepository, PasswordEncoderRepository passwordEncoderRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
+        this.jwtRepository = jwtRepository;
+        this.passwordEncoderRepository = passwordEncoderRepository;
         this.roleRepository = roleRepository;
     }
 
     @Bean
     public UserUseCase createUserUseCase() {
-        return new UserUseCase(userRepository, roleRepository);
+        return new UserUseCase(userRepository, roleRepository, passwordEncoderRepository);
     }
 
     @Bean
     public AuthUseCase authUseCase() {
-        return new AuthUseCase(userRepository, jwtService, passwordEncoder);
+        return new AuthUseCase(userRepository, jwtRepository, passwordEncoderRepository);
     }
 }
