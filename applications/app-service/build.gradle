@@ -6,7 +6,7 @@ dependencies {
     implementation project(':usecase')
     implementation project(':r2dbc-postgresql')
     implementation project(':reactive-web')
-    implementation project(':jwt')
+    implementation project(':jwt-security')
 
     // --- Librerías externas ---
     implementation 'org.reactivecommons.utils:object-mapper:0.1.0'

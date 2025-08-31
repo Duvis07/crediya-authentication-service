@@ -42,12 +42,12 @@ VALUES
     ),
     (
         '11223344',
-        'Juan Carlos',
-        'Pérez González',
+        'Cliente',
+        'Premium',
         '1990-03-15',
         'Calle 123 #45-67, Bogotá',
         '+573101234567',
-        'juan.perez@email.com',
+        'cliente@crediya.com',
         '$2a$12$Y7VTC5OdHuSPPch8YBosq.xE9SGU3Wgd.X5mn61wlicw7Y1P6UR/y',  --cliente123
         1,
         5000000,
