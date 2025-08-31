@@ -55,10 +55,9 @@ public class UserHandler extends BaseHandler {
     public Mono<ServerResponse> getUserByDocumentId(ServerRequest request) {
         String documentId = request.pathVariable("documentId");
         log.info("Searching user by documentId: {}", documentId);
-        
+
         return userUseCase.findByDocumentId(documentId)
                 .map(userMapper::toUserResponse)
-                .flatMap(this::okResponse)
-                .switchIfEmpty(notFoundResponse("User not found with documentId: " + documentId));
+                .flatMap(this::okResponse);
     }
 }

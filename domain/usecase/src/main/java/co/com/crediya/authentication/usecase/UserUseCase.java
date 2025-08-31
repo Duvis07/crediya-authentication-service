@@ -3,6 +3,7 @@ package co.com.crediya.authentication.usecase;
 import co.com.crediya.authentication.model.exceptions.DuplicateDocumentException;
 import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import co.com.crediya.authentication.model.exceptions.UserAlreadyExistsException;
+import co.com.crediya.authentication.model.exceptions.UserNotFoundException;
 import co.com.crediya.authentication.model.user.User;
 import co.com.crediya.authentication.model.user.UserType;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
@@ -49,7 +50,8 @@ public class UserUseCase {
         return userRepository.findByDocumentId(documentId)
                 .doOnSuccess(user -> log.log(Level.INFO, "User found with documentId: {0}", documentId))
                 .doOnError(error -> log.log(Level.SEVERE, "Error finding user by documentId {0}: {1}",
-                        new Object[]{documentId, error.getMessage()}));
+                        new Object[]{documentId, error.getMessage()}))
+                .switchIfEmpty(Mono.error(new UserNotFoundException("User not found with documentId: " + documentId)));
     }
 
     // PRIVATE METHODS
