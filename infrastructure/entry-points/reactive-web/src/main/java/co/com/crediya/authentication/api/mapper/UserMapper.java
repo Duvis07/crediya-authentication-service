@@ -14,6 +14,7 @@ public interface UserMapper {
     User toUser(CreateUserRequest request);
 
     @Mapping(target = "role", source = "role")
+    @Mapping(target = "userType", expression = "java(user.getRole() != null ? user.getRole().getName() : null)")
     UserResponse toUserResponse(User user);
     
     default UserType mapUserType(CreateUserRequest request) {
