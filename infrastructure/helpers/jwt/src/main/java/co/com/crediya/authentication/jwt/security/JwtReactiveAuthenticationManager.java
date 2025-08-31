@@ -1,4 +1,4 @@
-package co.com.crediya.authentication.api.config;
+package co.com.crediya.authentication.jwt.security;
 
 import co.com.crediya.authentication.model.auth.gateways.JwtRepository;
 import lombok.RequiredArgsConstructor;

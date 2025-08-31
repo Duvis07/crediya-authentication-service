@@ -1,4 +1,4 @@
-package co.com.crediya.authentication.api.config;
+package co.com.crediya.authentication.jwt.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
