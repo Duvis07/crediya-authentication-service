@@ -15,10 +15,10 @@ spring:
   r2dbc:
     host: ${R2DBC_HOST:localhost}
     port: ${R2DBC_PORT:5433}
-    database: ${R2DBC_DATABASE:crediya_db}
+    database: ${R2DBC_DATABASE:crediya_authentication_db}
     schema: ${R2DBC_SCHEMA:public}
     username: ${R2DBC_USERNAME:postgres}
-    password: ${R2DBC_PASSWORD:changeme}
+    password: ${R2DBC_PASSWORD:nueva_contraseña}
   sql:
     init:
       mode: always

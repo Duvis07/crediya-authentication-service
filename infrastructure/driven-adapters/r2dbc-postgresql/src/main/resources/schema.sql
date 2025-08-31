@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS roles (
 -- Create users table with FK
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
+    document_id VARCHAR(20) NOT NULL UNIQUE,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     birth_date DATE,
@@ -34,3 +35,4 @@ CREATE TABLE IF NOT EXISTS users (
 -- Create indexes
 CREATE INDEX IF NOT EXISTS idx_users_role_id ON users(role_id);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_document_id ON users(document_id);

@@ -31,10 +31,12 @@ El despliegue de la solución se realizará en AWS de forma manual usando ECS co
 Se utilizarán bases de datos relacionales (RDS) para la persistencia de datos transaccionales, y bases de datos no relacionales (DynamoDB) para datos de reportes.
 Para el control de versiones y el ciclo de CI/CD se usará Docker y AWS ECR.
 
+---------------------------------------------------------------------------
 
 
-HU
-1	Registrar usuarios en el sistema	Como administrador/asesor del sistema, quiero registrar un nuevo usuarios proporcionando sus datos personales básicos, incluyendo nombres y apellidos por separado, para mantener un registro claro y ordenado de los clientes potenciales.
+HU1
+
+Registrar usuarios en el sistema	Como administrador/asesor del sistema, quiero registrar un nuevo usuarios proporcionando sus datos personales básicos, incluyendo nombres y apellidos por separado, para mantener un registro claro y ordenado de los clientes potenciales.
 
 - microservicio AUTENTICACION con WebFlux.
 
@@ -54,4 +56,50 @@ HU
 
 - El sistema debe validar el formato correcto de los datos, como por ejemplo, que el salario_base sea un valor numérico (este entre 0 y 15000000) y el correo_electronico tenga un formato de email válido.
 
-- Una vez registrado exitosamente, la información del solicitante debe quedar guardada permanentemente en la base de datos.							
+- Una vez registrado exitosamente, la información del solicitante debe quedar guardada permanentemente en la base de datos.	
+
+
+-----------------------------------------------------------------------------------------------
+
+HU2
+Registrar una solicitud de prestamo	Como cliente, quiero enviar mi solicitud de préstamo con la información necesaria (monto y plazo deseado) para que CrediYa pueda evaluarla	- microservicio SOLICITUDES con WebFlux.
+
+- El endpoint (POST /api/v1/solicitud)
+
+- El endpoint debe validar la información del cliente y del préstamo.
+
+- El código debe manejar las transacciones de forma reactiva, aprovechando las ventajas de WebFlux.
+
+- Se deben agregar logs de traza para monitorear
+
+- toda excepción que se produzca debe ser manejada y procesada, para que el usuario que usa la api no le lleguen mensajes inesperados
+- Se puede enviar una solicitud de crédito que incluya información del cliente (documento de identidad) y los detalles del préstamo (monto, plazo), el tipo de prestamos que se quiere hacer
+
+- La solicitud se registra automáticamente con un estado inicial de "Pendiente de revisión".
+
+- El sistema valida que el tipo de préstamo seleccionado sea uno de los tipos de préstamo existentes.
+
+
+---------------------------------------------------------------------------------------
+
+HU3 Agregar Autenticación al sistema	Como administrador/asesor/cliente necesito agregar la autenticación al sistema para poder acceder a las funcionalidades que le corresponden a mi rol y exponer mis servicios solo a usuarios logiados	- microservicio AUTENTICACION con WebFlux.
+
+- El endpoint (POST /api/v1/login)
+
+- Debe seguir los principios de la arquitectura hexagonal, separando el dominio de la infraestructura.
+
+- El microservicio AUTENTICACION debe manejar la generación de tokens (por ejemplo, JWT).
+
+- Se deben agregar logs de traza para monitorear- Se deben agregar logs de traza para monitorear
+
+- toda excepción que se produzca debe ser manejada y procesada, para que la usuario que usa la api no le lleguen mensajes inesperados	- El inicio de sesión es a través de correo y clave.
+- Se debe validar usuario y contraseña correcta.
+- El número de intentos debe ser ilimitado.
+- Una vez iniciada la sesión, se debe garantizar que con esa sesión iniciada, cada usuario tiene los permisos para realizar las acciones que le correspondan a su rol.
+- Agregar validacion de autenticacion a los siguientes endpoint:
+-- si registro un usuario validar que la persona que llamo el servicio sea un usuario admin/asesor.
+-- si creo una solicitud de prestamo, validar que la persona que llamo el servicio sea un cliente y solo pueda crear solicitudes de prestamo a el mismo.
+
+
+
+Nota: En esta versión de la aplicación, no está contemplada la recuperación de contraseña.						

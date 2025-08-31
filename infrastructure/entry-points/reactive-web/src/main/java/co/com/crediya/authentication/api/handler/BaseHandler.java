@@ -30,14 +30,4 @@ abstract class BaseHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(data);
     }
-
-    protected Mono<ServerResponse> createdResponse(Object data) {
-        return ServerResponse.status(201)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(data);
-    }
-
-    protected Mono<ServerResponse> noContentResponse() {
-        return ServerResponse.noContent().build();
-    }
 }

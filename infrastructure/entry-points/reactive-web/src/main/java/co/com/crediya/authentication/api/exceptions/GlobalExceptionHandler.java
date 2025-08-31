@@ -1,6 +1,7 @@
 package co.com.crediya.authentication.api.exceptions;
 
 import co.com.crediya.authentication.api.dto.ErrorResponse;
+import co.com.crediya.authentication.model.exceptions.DuplicateDocumentException;
 import co.com.crediya.authentication.model.exceptions.InvalidCredentialsException;
 import co.com.crediya.authentication.model.exceptions.InvalidUserDataException;
 import co.com.crediya.authentication.model.exceptions.UserAlreadyExistsException;
@@ -43,6 +44,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             UserAlreadyExistsException.class, ex -> new ErrorMappingResult(HttpStatus.CONFLICT, ex.getMessage(), List.of()),
             UserNotFoundException.class, ex -> new ErrorMappingResult(HttpStatus.NOT_FOUND, ex.getMessage(), List.of()),
             InvalidUserDataException.class, ex -> new ErrorMappingResult(HttpStatus.BAD_REQUEST, ex.getMessage(), List.of()),
+            DuplicateDocumentException.class, ex -> new ErrorMappingResult(HttpStatus.CONFLICT, ex.getMessage(), List.of()),
             ValidationException.class, this::handleValidationException,
             NumberFormatException.class, ex -> new ErrorMappingResult(HttpStatus.BAD_REQUEST, INVALID_FORMAT_MESSAGE, List.of())
     );

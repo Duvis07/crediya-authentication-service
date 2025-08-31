@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User {
     private Long id;
+    private String documentId;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;

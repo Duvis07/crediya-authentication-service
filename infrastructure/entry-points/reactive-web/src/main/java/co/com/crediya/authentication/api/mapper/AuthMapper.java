@@ -9,8 +9,5 @@ import org.mapstruct.Mapping;
 public interface AuthMapper {
 
     @Mapping(source = "token", target = "accessToken")
-    @Mapping(source = "tokenType", target = "tokenType")
-    @Mapping(source = "expiresIn", target = "expiresIn")
-    @Mapping(source = "userRole", target = "userRole")
     LoginResponse toLoginResponse(JwtToken jwtToken);
 }

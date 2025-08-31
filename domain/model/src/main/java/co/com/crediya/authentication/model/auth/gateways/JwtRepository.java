@@ -4,7 +4,7 @@ import co.com.crediya.authentication.model.auth.JwtToken;
 import co.com.crediya.authentication.model.user.User;
 import reactor.core.publisher.Mono;
 
-public interface JwtService {
+public interface JwtRepository {
     Mono<JwtToken> generateToken(User user);
 
     Mono<Boolean> validateToken(String token);

@@ -22,6 +22,9 @@ public class UserEntity {
     @Id
     private Long id;
 
+    @Column("document_id")
+    private String documentId;
+
     @Column("first_name")
     private String firstName;
 

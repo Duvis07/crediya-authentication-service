@@ -86,6 +86,37 @@ public class RouterRest {
                             }
                     )
             ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/{documentId}",
+                    method = RequestMethod.GET,
+                    operation = @Operation(
+                            operationId = "getUserByDocumentId",
+                            summary = "Obtener usuario por documento de identidad",
+                            description = "Obtiene un usuario específico por su documento de identidad",
+                            tags = {"Usuarios"},
+                            parameters = {
+                                    @io.swagger.v3.oas.annotations.Parameter(
+                                            name = "documentId",
+                                            description = "Documento de identidad del usuario",
+                                            required = true,
+                                            in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+                                            schema = @Schema(type = "string", example = "12345678")
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Usuario encontrado exitosamente",
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = UserResponse.class)
+                                            )
+                                    ),
+                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+                                    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+                            }
+                    )
+            )
     })
     public RouterFunction<ServerResponse> userRoutes() {
         return route(POST("/api/v1/usuarios")
@@ -94,7 +125,10 @@ public class RouterRest {
                 userHandler::createUser)
                 .andRoute(GET("/api/v1/usuarios")
                         .and(accept(MediaType.APPLICATION_JSON)),
-                        userHandler::getAllUsers);
+                        userHandler::getAllUsers)
+                .andRoute(GET("/api/v1/usuarios/{documentId}")
+                        .and(accept(MediaType.APPLICATION_JSON)),
+                        userHandler::getUserByDocumentId);
     }
 
     @Bean

@@ -41,6 +41,14 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
+    public Mono<User> findByDocumentId(String documentId) {
+        log.debug("Searching user by documentId: {}", documentId);
+        return userEntityRepository.findByDocumentId(documentId)
+                .flatMap(this::enrichWithRole)
+                .doOnNext(user -> log.debug("User found with documentId: {}", documentId));
+    }
+
+    @Override
     public Mono<Boolean> existsByEmail(String email) {
         return userEntityRepository.existsByEmail(email);
     }

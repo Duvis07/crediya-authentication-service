@@ -7,6 +7,7 @@ import co.com.crediya.authentication.model.role.gateways.RoleRepository;
 import co.com.crediya.authentication.model.user.User;
 import co.com.crediya.authentication.model.user.UserType;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
+import co.com.crediya.authentication.model.auth.gateways.PasswordEncoderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class UserUseCaseTest {
@@ -33,13 +35,18 @@ class UserUseCaseTest {
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         roleRepository = Mockito.mock(RoleRepository.class);
-        userUseCase = new UserUseCase(userRepository, roleRepository);
+        PasswordEncoderRepository passwordEncoder = Mockito.mock(PasswordEncoderRepository.class);
+        userUseCase = new UserUseCase(userRepository, roleRepository, passwordEncoder);
+
+        // Mock password encoder to return encrypted password
+        when(passwordEncoder.encode(anyString())).thenReturn(Mono.just("$2a$10$encrypted.password.hash"));
 
         validUser = User.builder()
                 .id(1L)
                 .firstName("Juan")
                 .lastName("Pérez")
                 .email("juan.perez@example.com")
+                .password("plainPassword123")
                 .birthDate(LocalDate.of(1990, 5, 15))
                 .baseSalary(BigDecimal.valueOf(5_000_000))
                 .address("Calle 123")
@@ -131,6 +138,7 @@ class UserUseCaseTest {
                 .firstName("")  // Invalid: empty first name
                 .lastName("Pérez")
                 .email("invalid-email")  // Invalid: bad email format
+                .password("password123")
                 .baseSalary(BigDecimal.valueOf(-1000))  // Invalid: negative salary
                 .build();
 
@@ -201,13 +209,12 @@ class UserUseCaseTest {
     void createUserFailsWhenEmailCheckThrowsException() {
         when(userRepository.existsByEmail(validUser.getEmail()))
                 .thenReturn(Mono.error(new RuntimeException("Database error")));
-        when(roleRepository.findByCode("APPLICANT")).thenReturn(Mono.just(defaultRole));
 
         StepVerifier.create(userUseCase.createUser(validUser, UserType.APPLICANT))
                 .expectError(RuntimeException.class)
                 .verify();
 
-        verify(roleRepository).findByCode("APPLICANT");
         verify(userRepository, never()).save(any(User.class));
+        verify(roleRepository, never()).findByCode(anyString());
     }
 }
