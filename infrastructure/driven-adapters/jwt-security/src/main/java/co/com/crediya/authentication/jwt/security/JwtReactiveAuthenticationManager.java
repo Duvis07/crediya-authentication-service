@@ -19,6 +19,10 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
+        if (authentication.getCredentials() == null) {
+            return Mono.error(new IllegalArgumentException("Token cannot be null"));
+        }
+        
         String token = authentication.getCredentials().toString();
         
         return jwtRepository.validateToken(token)
