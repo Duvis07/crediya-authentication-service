@@ -53,6 +53,20 @@ VALUES
         5000000,
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
+    ),
+    (
+        '99887766',
+        'Juan',
+        'Pérez',
+        '1988-07-20',
+        'Carrera 15 #32-45, Medellín',
+        '+573205551234',
+        'juan.perez@example.com',
+        '$2a$12$i0C5kklV4ptLrTip.1xil.NVoG3Bv7wnuFwN6boHSEgnX0L5DdNw6',  --admin123456
+        1,
+        4500000,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
     )
 ON CONFLICT (email) DO UPDATE SET
     birth_date = EXCLUDED.birth_date,
