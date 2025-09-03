@@ -2,15 +2,17 @@
 
 Microservicio de autenticación para la plataforma CrediYa, desarrollado con **Clean Architecture** y **Spring WebFlux** para gestión de usuarios y autenticación JWT.
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 - [Descripción del Proyecto](#descripción-del-proyecto)
 - [Arquitectura](#arquitectura)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Requerimientos Técnicos](#requerimientos-técnicos)
+- [Deployment con Docker/Podman](#deployment-con-dockerpodman)
 - [Instalación y Ejecución](#instalación-y-ejecución)
 - [Documentación API](#documentación-api)
 - [Usuarios Iniciales](#usuarios-iniciales)
+- [Troubleshooting](#troubleshooting)
 - [Testing](#testing)
 
 ## 🚀 Descripción del Proyecto
@@ -128,30 +130,138 @@ testImplementation 'org.springframework.boot:spring-boot-starter-test'
 testImplementation 'io.projectreactor:reactor-test'
 ```
 
-## 🚀 Instalación y Ejecución
+## Deployment con Docker/Podman
+
+### Prerrequisitos
+- **Podman** o Docker instalado
+- **podman-compose** (`pip install podman-compose`)
+- Java 17+ (para build local)
+
+### Opción 1: Deployment Rápido (Recomendado)
+
+**Reinicio completo desde cero:**
+```bash
+# Windows
+scripts\clean-restart.bat
+
+# Linux/Mac
+./scripts/clean-restart.sh
+```
+
+Este script ejecuta automáticamente:
+1. Para todos los servicios
+2. Elimina volúmenes (limpia BD)
+3. Elimina imágenes viejas
+4. Reconstruye la imagen
+5. Inicia servicios desde cero
+6. Verifica estado
+
+### Opción 2: Comandos Manuales
+
+**1. Construir imagen:**
+```bash
+# Windows
+scripts\build.bat
+
+# Linux/Mac  
+./scripts/build.sh
+```
+
+**2. Iniciar servicios:**
+```bash
+podman-compose up -d
+```
+
+**3. Verificar estado:**
+```bash
+podman-compose ps
+podman-compose logs -f authentication-service
+```
+
+**4. Detener servicios:**
+```bash
+podman-compose down
+```
+
+**5. Reinicio limpio (eliminar volúmenes):**
+```bash
+podman-compose down -v
+```
+
+### Opción 3: Scripts de Deployment
+
+**Windows:**
+```bash
+# Iniciar servicios
+scripts\deploy.bat up
+
+# Detener servicios
+scripts\deploy.bat down
+
+# Reiniciar servicios
+scripts\deploy.bat restart
+
+# Ver logs
+scripts\deploy.bat logs
+
+# Ver estado
+scripts\deploy.bat status
+
+# Construir e iniciar
+scripts\deploy.bat build
+```
+
+**Linux/Mac:**
+```bash
+# Iniciar servicios
+./scripts/deploy.sh up
+
+# Detener servicios
+./scripts/deploy.sh down
+
+# Reiniciar servicios
+./scripts/deploy.sh restart
+
+# Ver logs
+./scripts/deploy.sh logs
+
+# Ver estado
+./scripts/deploy.sh status
+
+# Construir e iniciar
+./scripts/deploy.sh build
+```
+
+### Configuración de Servicios
+
+El `docker-compose.yml` incluye:
+
+**PostgreSQL:**
+- Puerto: `5433:5432` (externo:interno)
+- Base de datos: `crediya_authentication_db`
+- Usuario: `postgres`
+- Contraseña: `nueva_password`
+- Volumen persistente: `postgres_auth_data`
+
+**Authentication Service:**
+- Puerto: `8080:8080`
+- Imagen: `crediya/authentication-service:latest`
+- Dependencias: PostgreSQL (healthcheck)
+- Variables de entorno configuradas automáticamente
+
+### URLs de Acceso
+
+Una vez iniciados los servicios:
+- **API**: http://localhost:8080
+- **Health Check**: http://localhost:8080/actuator/health
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+
+## Instalación y Ejecución (Desarrollo Local)
 
 ### Prerrequisitos
 - Java 17 o superior
-- PostgreSQL 12+ (o Docker)
+- PostgreSQL 12+ (o usar Docker)
 - Gradle 8.x (o usar wrapper incluido)
-
-### Base de Datos
-1. **Crear base de datos PostgreSQL:**
-```sql
-CREATE DATABASE crediya_auth;
-CREATE USER crediya_user WITH PASSWORD 'crediya_pass';
-GRANT ALL PRIVILEGES ON DATABASE crediya_auth TO crediya_user;
-```
-
-2. **Configurar variables de entorno (.env):**
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=crediya_auth
-DB_USER=crediya_user
-DB_PASSWORD=crediya_pass
-JWT_SECRET=your-super-secret-jwt-key-here
-```
 
 ### Ejecutar la Aplicación
 ```bash
@@ -166,8 +276,6 @@ cd authentication-service
 ./gradlew build
 java -jar applications/app-service/build/libs/authentication-service.jar
 ```
-
-La aplicación estará disponible en: `http://localhost:8080`
 
 ## 📚 Documentación API
 
@@ -215,7 +323,7 @@ GET /api/v1/usuarios
 Authorization: Bearer <jwt-token>
 ```
 
-## 👥 Usuarios Iniciales
+## Usuarios Iniciales
 
 El sistema incluye usuarios predefinidos para facilitar el bootstrap inicial:
 
@@ -231,10 +339,109 @@ El sistema incluye usuarios predefinidos para facilitar el bootstrap inicial:
 - **Rol:** ASESOR
 - **Propósito:** Funcionalidades de asesoría de crédito
 
+### Usuario Cliente Premium
+- **Email:** `cliente@crediya.com`
+- **Contraseña:** `cliente123`
+- **Rol:** APPLICANT
+- **Propósito:** Usuario de prueba para solicitudes
+
+### Usuario Juan Pérez
+- **Email:** `juan.perez@example.com`
+- **Contraseña:** `admin123456`
+- **Rol:** APPLICANT
+- **Propósito:** Usuario de prueba adicional
+
 ### Notas de Seguridad
-- Contraseñas encriptadas con BCrypt (strength 10)
+- Contraseñas encriptadas con BCrypt (strength 12)
 - Cambiar contraseñas por defecto en producción
-- Usuarios creados automáticamente al iniciar la aplicación
+- Usuarios creados automáticamente por PostgreSQL init script
+
+## Troubleshooting
+
+### Problemas Comunes y Soluciones
+
+#### 1. Error de Conexión a Base de Datos
+```
+Failed to obtain R2DBC Connection
+```
+**Solución:**
+- Verificar que PostgreSQL esté corriendo: `podman-compose ps`
+- Reiniciar servicios: `scripts\clean-restart.bat`
+- Verificar logs: `podman-compose logs postgres-auth`
+
+#### 2. Error de Autenticación "Invalid credentials"
+```
+401 Unauthorized - Invalid credentials
+```
+**Solución:**
+- Verificar que uses las credenciales correctas (ver [Usuarios Iniciales](#usuarios-iniciales))
+- Verificar que la BD tenga los usuarios: 
+  ```bash
+  podman exec crediya-postgres-auth psql -U postgres -d crediya_authentication_db -c "SELECT email, first_name FROM users;"
+  ```
+
+#### 3. Error de Esquema de BD
+```
+column users.birth_date does not exist
+```
+**Solución:**
+- Ejecutar reinicio limpio para recrear BD: `scripts\clean-restart.bat`
+- Esto eliminará volúmenes y recreará tablas con esquema correcto
+
+#### 4. Problemas con Caracteres Especiales
+```
+value contains character 'ñ' which is non US-ASCII
+```
+**Solución:**
+- Ya corregido en configuración actual
+- Usar solo caracteres ASCII en contraseñas de BD
+
+#### 5. Puerto en Uso
+```
+Error starting userland proxy: listen tcp 0.0.0.0:8080: bind: address already in use
+```
+**Solución:**
+- Detener servicios existentes: `podman-compose down`
+- Verificar puertos: `netstat -an | findstr :8080`
+- Cambiar puerto en `docker-compose.yml` si es necesario
+
+#### 6. Imagen Docker Corrupta
+```
+Error response from daemon: No such image
+```
+**Solución:**
+- Limpiar imágenes: `podman system prune -f`
+- Reconstruir: `scripts\build.bat`
+
+### Comandos de Diagnóstico
+
+**Verificar estado de servicios:**
+```bash
+podman-compose ps
+```
+
+**Ver logs en tiempo real:**
+```bash
+podman-compose logs -f authentication-service
+podman-compose logs -f postgres-auth
+```
+
+**Conectar a PostgreSQL:**
+```bash
+podman exec -it crediya-postgres-auth psql -U postgres -d crediya_authentication_db
+```
+
+**Verificar conectividad:**
+```bash
+curl http://localhost:8080/actuator/health
+```
+
+**Probar autenticación:**
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@crediya.com","password":"admin123456"}'
+```
 
 ## 🧪 Testing
 
